@@ -3,6 +3,233 @@
   "compatibilityLevel": 1400,
   "model": {
     "culture": "hu-HU",
+    "dataSources": [
+      {
+        "type": "structured",
+        "name": "SQL/TSZDELL2015\\SQL2017;POC_OTP_201804_Security_DAX_Embedded_Tables",
+        "connectionDetails": {
+          "protocol": "tds",
+          "address": {
+            "server": "TSZDELL2015\\SQL2017",
+            "database": "POC_OTP_201804_Security_DAX_Embedded_Tables"
+          },
+          "authentication": null,
+          "query": null
+        },
+        "options": {},
+        "credential": {
+          "AuthenticationKind": "ServiceAccount",
+          "kind": "SQL",
+          "path": "tszdell2015\\sql2017;POC_OTP_201804_Security_DAX_Embedded_Tables",
+          "EncryptConnection": false
+        }
+      }
+    ],
+    "tables": [
+      {
+        "name": "DimOrganization",
+        "columns": [
+          {
+            "name": "OrganizationId",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "OrganizationId"
+          },
+          {
+            "name": "OrganizationName",
+            "dataType": "string",
+            "sourceColumn": "OrganizationName"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/TSZDELL2015\\SQL2017;POC_OTP_201804_Security_DAX_Embedded_Tables\",",
+                "    dbo_DimOrganization = Source{[Schema=\"dbo\",Item=\"DimOrganization\"]}[Data]",
+                "in",
+                "    dbo_DimOrganization"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "DimOtherDummyDimension",
+        "columns": [
+          {
+            "name": "OtherDummyDimensionId",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "OtherDummyDimensionId"
+          },
+          {
+            "name": "NameForDummyDimension",
+            "dataType": "string",
+            "sourceColumn": "NameForDummyDimension"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/TSZDELL2015\\SQL2017;POC_OTP_201804_Security_DAX_Embedded_Tables\",",
+                "    dbo_DimOtherDummyDimension = Source{[Schema=\"dbo\",Item=\"DimOtherDummyDimension\"]}[Data]",
+                "in",
+                "    dbo_DimOtherDummyDimension"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "UserOrganizationSecurity",
+        "description": "This should come from MDS",
+        "isHidden": true,
+        "columns": [
+          {
+            "name": "UserOrganizationSecurityId",
+            "dataType": "int64",
+            "sourceColumn": "UserOrganizationSecurityId"
+          },
+          {
+            "name": "OrganizationId",
+            "dataType": "int64",
+            "sourceColumn": "OrganizationId"
+          },
+          {
+            "name": "UserName",
+            "dataType": "string",
+            "sourceColumn": "UserName"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/TSZDELL2015\\SQL2017;POC_OTP_201804_Security_DAX_Embedded_Tables\",",
+                "    dbo_UserOrganizationSecurity = Source{[Schema=\"dbo\",Item=\"UserOrganizationSecurity\"]}[Data]",
+                "in",
+                "    dbo_UserOrganizationSecurity"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "FactSomeThing",
+        "columns": [
+          {
+            "name": "FactSomeThingId",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "FactSomeThingId"
+          },
+          {
+            "name": "OrganizationId",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "OrganizationId"
+          },
+          {
+            "name": "OtherDummyDimensionId",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "OtherDummyDimensionId"
+          },
+          {
+            "name": "SomeFactValue",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "SomeFactValue"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/TSZDELL2015\\SQL2017;POC_OTP_201804_Security_DAX_Embedded_Tables\",",
+                "    dbo_FactSomeThing = Source{[Schema=\"dbo\",Item=\"FactSomeThing\"]}[Data]",
+                "in",
+                "    dbo_FactSomeThing"
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "SumFactValue",
+            "expression": " Sum(FactSomeThing[SomeFactValue])"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "8f10b803-8c50-4ccc-a264-d4e09b1b6d48",
+        "fromTable": "FactSomeThing",
+        "fromColumn": "OrganizationId",
+        "toTable": "DimOrganization",
+        "toColumn": "OrganizationId"
+      },
+      {
+        "name": "6094ce46-8f4e-4ced-b29d-0f1182a5be7a",
+        "fromTable": "UserOrganizationSecurity",
+        "fromColumn": "OrganizationId",
+        "toTable": "DimOrganization",
+        "toColumn": "OrganizationId"
+      },
+      {
+        "name": "ed24cb32-0984-41ef-bb9f-19aea82c7aee",
+        "fromTable": "FactSomeThing",
+        "fromColumn": "OtherDummyDimensionId",
+        "toTable": "DimOtherDummyDimension",
+        "toColumn": "OtherDummyDimensionId"
+      }
+    ],
+    "roles": [
+      {
+        "name": "OrganizationUsers",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "DAXTestUsers",
+            "memberId": "S-1-5-21-3744529132-3365867174-676640162-1037"
+          },
+          {
+            "memberName": "szabeszcsi",
+            "memberId": "S-1-5-21-3744529132-3365867174-676640162-1001"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "DimOrganization",
+            "filterExpression": "DimOrganization[OrganizationId] = LOOKUPVALUE(UserOrganizationSecurity[OrganizationId],UserOrganizationSecurity[UserName],USERNAME(),UserOrganizationSecurity[OrganizationId],DimOrganization[OrganizationId])"
+          },
+          {
+            "name": "UserOrganizationSecurity",
+            "filterExpression": "FALSE()",
+            "metadataPermission": "none"
+          }
+        ]
+      }
+    ],
     "annotations": [
       {
         "name": "ClientCompatibilityLevel",
